@@ -72,7 +72,79 @@ If these are samples taken from populations with the same mean height, there is 
 
 The mean heights of oak and pine trees were (x +- y) and (x +-y), respectively, and the difference was not significant (t(`r round(tree_t$parameter, 2)`) = `r round(tree_t$statistic, 2)`, p = `r round(tree_t$p.value,2)`))
 
-"t(df) = t-statistic, p = p-value"
+"two sample t test notation: t(df) = t-statistic, p = p-value"
+
+*AVOID*: p = 0
+
+When things get really small (usually p<0.001)
+
+*Not great:* p = 0.000000013
+*Better:* p < 0.001
+
+
+## Part 3: Another T test with cars data
+Using the `mpg` dataset
+
+### Take a look at the data
+
+```{r}
+compact_suv <- mpg %>%
+  filter(class %in% c("compact", "suv")) # keep rows that contain compact or suv within the column `class`
+
+# check for remaining levels
+unique(compact_suv$class)
+
+```
+Create a histogram of city gas mileage (cty) faceted by class starting from compact_suv
+
+```{r}
+ggplot(data = compact_suv, x = cty) +
+  geom_histogram(aes(color = class, x = cty), bins = 10) +
+  facet_wrap(~ class) +
+  labs (x = "City (mpg)",
+        y = "Number of Cars")
+
+ggplot(data = compact_suv, aes(sample = cty)) +
+  geom_qq() +
+  facet_wrap(~ class)
+# if qq plot is linear then you can assume data is normally distributed.
+```
+
+Find some summary statistics for each group.
+
+```{r}
+car_stats <- compact_suv %>%
+  group_by(class) %>%
+  summarize(mean_city = round(mean(cty)),
+            sd_city = sd(cty),
+            sample_size = n())
+
+car_stats
+```
+
+The `t.test()` function REALLY wants vectors of things. Here is how you pull data to put into a vector:Use `pull()` function to pull out a vector from a data frame
+
+```{r}
+compact_sample <- compact_suv %>%
+  filter(class == "compact") %>%
+  pull(cty)
+
+# Your turn, do the same thing to get a vector of city gas mielages for SUVs
+
+suv_sample <- compact_suv %>%
+  filter(class == "suv") %>%
+  pull(cty)
+```
+
+Null hypothesis (H0): Mean city gas mileages for SUVs and compact cars are the same
+
+```{r}
+t.test(compact_sample, suv_sample)
+```
+Conclusion: reject the null hypothesis that the mean gas mileages are the same. There is a significant differenc in mean city gas mileage for SUVs and compact cars (t(df) = t-statistic, p < 0.001)
+
+
+
 
 
 
