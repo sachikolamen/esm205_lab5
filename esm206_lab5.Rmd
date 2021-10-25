@@ -4,7 +4,7 @@ author: "Sachiko Lamen"
 date: "10/25/2021"
 output: 
   html_document: 
-    theme: cerulean
+    theme: spacelab
     toc: yes
     code_folding: hide
 ---
@@ -44,9 +44,35 @@ Mean otter length is 36.9 inches $\pm$ 9.3 (mean $\pm$ sd, n = 8) with a 95% con
 #### Now, using in-line referencing
 (Use `objectname$valuename` to pull element values, hover over and press Cmd + Return to view value)
 
-Mean otter length is `r round(otter_ci$estimate, 1)` inches
+Mean otter length is `r round(otter_ci$estimate, 1)` inches with a 95% confidence interval of [`r round(otter_ci$conf.int[1], 1)`, `r round(otter_ci$conf.int[2], 1)`]
 
+## Part 2: Two Sample T-Test
 
+### Example 1
+
+Make two mock samples, and ask the question: Do we have sufficient evidence to make us reject the null hypothesis that these samples were drawn from populations with the same mean?
+```{r}
+# Make my mock samples
+
+oak_trees <- c(20, 19, 24, 28, 34, 12, 15, 25)
+  
+  
+pine_trees <- c(39, 26, 20, 30, 37, 22, 19, 18)
+
+# Two-sample T test
+tree_t <- t.test(oak_trees, pine_trees)
+
+# Null hypothesis: Mean heights are the same
+# i.e.: Trees are drawn from populations with the same mean height
+
+```
+Null hypothesis: Trees are drawn from populations with the same mean height
+
+If these are samples taken from populations with the same mean height, there is a 28.7% chance of taking random samples from each populations  and finding that the sample means are at least as different as the means of the t-test. This is not sufficient evidence to reject the null hypothesis.
+
+The mean heights of oak and pine trees were (x +- y) and (x +-y), respectively, and the difference was not significant (t(`r round(tree_t$parameter, 2)`) = `r round(tree_t$statistic, 2)`, p = `r round(tree_t$p.value,2)`))
+
+"t(df) = t-statistic, p = p-value"
 
 
 
